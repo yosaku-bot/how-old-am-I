@@ -1,378 +1,456 @@
-import { useState, useEffect } from “react”;
+<!DOCTYPE html>
 
-const COLORS = [”#FF4D8D”, “#FFD93D”, “#4DFFEE”, “#C04DFF”, “#FF7A4D”, “#4DFF91”];
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>今何歳だっけ？</title>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF4D8D;
+    --yellow: #FFD93D;
+    --cyan: #4DFFEE;
+    --purple: #C04DFF;
+    --orange: #FF7A4D;
+    --bg: #0D0D1A;
+  }
 
-const MILESTONES = {
-0: “👶 誕生！この世界に来たよ”,
-1: “🚶 よちよち歩きはじめ”,
-3: “🎒 幼稚園・保育園”,
-6: “🏫 小学校入学”,
-10: “🔟 二桁！小学校高学年”,
-12: “🎓 中学校入学”,
-13: “🌟 ティーンエイジャー突入！”,
-15: “📚 高校受験”,
-18: “🗳️ 選挙権・成年”,
-20: “🎊 成人式”,
-22: “💼 大学卒業・社会人デビュー”,
-25: “🚗 レンタカーが借りやすくなる”,
-30: “🌿 アラサー！”,
-40: “🔥 アラフォー！まだまだ現役”,
-50: “🌸 半世紀！”,
-60: “🎋 還暦おめでとう！”,
-70: “🌺 古希”,
-77: “🍀 喜寿”,
-80: “🎑 傘寿”,
-88: “🌾 米寿”,
-99: “✨ 白寿”,
-100: “🎆 100歳！超大台！！”,
-};
+- { margin: 0; padding: 0; box-sizing: border-box; }
 
-function calcAge(birth) {
-const now = new Date();
-let age = now.getFullYear() - birth.getFullYear();
-const mDiff = now.getMonth() - birth.getMonth();
-if (mDiff < 0 || (mDiff === 0 && now.getDate() < birth.getDate())) age–;
-return age;
+body {
+background: var(–bg);
+color: #fff;
+font-family: ‘BIZ UDPGothic’, sans-serif;
+min-height: 100vh;
+overflow-x: hidden;
 }
 
-function calcMonths(birth) {
-const now = new Date();
-let m = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
-if (now.getDate() < birth.getDate()) m–;
-return m;
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background:
+radial-gradient(circle at 20% 20%, rgba(255,77,141,0.15) 0%, transparent 50%),
+radial-gradient(circle at 80% 80%, rgba(192,77,255,0.15) 0%, transparent 50%);
+pointer-events: none;
+z-index: 0;
 }
 
-function calcDays(birth) {
-return Math.floor((new Date() - birth) / 86400000);
+.container {
+position: relative;
+z-index: 1;
+max-width: 700px;
+margin: 0 auto;
+padding: 2rem 1.5rem 4rem;
 }
 
-function calcNextBirthday(birth) {
-const now = new Date();
-const next = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
-if (next <= now) next.setFullYear(next.getFullYear() + 1);
-return Math.floor((next - now) / 86400000);
+h1 {
+font-family: ‘Dela Gothic One’, sans-serif;
+font-size: clamp(2.2rem, 8vw, 3.8rem);
+text-align: center;
+margin-bottom: 0.3rem;
+background: linear-gradient(135deg, var(–pink), var(–yellow), var(–cyan));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+animation: titleFloat 3s ease-in-out infinite;
 }
 
-function Confetti() {
-const emojis = [“🎉”, “🎊”, “✨”, “🌟”, “💫”, “🎈”];
-const items = Array.from({ length: 18 }, (_, i) => ({
-id: i,
-emoji: emojis[i % emojis.length],
-left: Math.random() * 100,
-delay: i * 0.12,
-duration: 2.5 + Math.random() * 1.5,
-}));
-return (
-<div style={{ position: “fixed”, inset: 0, pointerEvents: “none”, zIndex: 999 }}>
-{items.map((item) => (
-<div
-key={item.id}
-style={{
-position: “absolute”,
-top: -40,
-left: `${item.left}%`,
-fontSize: “1.8rem”,
-animation: `confettiFall ${item.duration}s ${item.delay}s linear forwards`,
-}}
->
-{item.emoji}
-</div>
-))}
-</div>
-);
+@keyframes titleFloat {
+0%, 100% { transform: translateY(0px); }
+50% { transform: translateY(-6px); }
 }
 
-export default function App() {
-const [dateVal, setDateVal] = useState(””);
-const [result, setResult] = useState(null);
-const [showConfetti, setShowConfetti] = useState(false);
-
-const today = new Date();
-const maxDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-useEffect(() => {
-if (!dateVal) { setResult(null); return; }
-const birth = new Date(dateVal);
-if (isNaN(birth)) return;
-
-```
-const age = calcAge(birth);
-const months = calcMonths(birth);
-const days = calcDays(birth);
-const nextBD = calcNextBirthday(birth);
-const isBirthday = birth.getDate() === today.getDate() && birth.getMonth() === today.getMonth();
-
-const timeline = [];
-for (let a = 0; a <= age; a++) {
-  const year = birth.getFullYear() + a;
-  timeline.push({ age: a, year, milestone: MILESTONES[a] || null });
+.subtitle {
+text-align: center;
+color: rgba(255,255,255,0.5);
+font-size: 0.9rem;
+margin-bottom: 2.5rem;
+letter-spacing: 0.1em;
 }
-timeline.reverse();
 
-setResult({ age, months, days, nextBD, isBirthday, birth, timeline });
-
-if (isBirthday) {
-  setShowConfetti(true);
-  setTimeout(() => setShowConfetti(false), 5000);
+.input-card {
+background: rgba(255,255,255,0.05);
+border: 2px solid rgba(255,255,255,0.1);
+border-radius: 24px;
+padding: 2rem;
+margin-bottom: 2rem;
+transition: border-color 0.3s;
 }
-```
 
-}, [dateVal]);
+.input-card:focus-within {
+border-color: var(–pink);
+box-shadow: 0 0 30px rgba(255,77,141,0.2);
+}
 
-const styles = {
-body: {
-background: “#0D0D1A”,
-minHeight: “100vh”,
-fontFamily: “‘BIZ UDPGothic’, ‘Noto Sans JP’, sans-serif”,
-color: “#fff”,
-padding: “0 0 4rem”,
-},
-bgGlow: {
-position: “fixed”,
-inset: 0,
-background: `radial-gradient(circle at 20% 20%, rgba(255,77,141,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(192,77,255,0.15) 0%, transparent 50%)`,
-pointerEvents: “none”,
-zIndex: 0,
-},
-container: {
-position: “relative”,
-zIndex: 1,
-maxWidth: 680,
-margin: “0 auto”,
-padding: “2rem 1.2rem”,
-},
-h1: {
-fontFamily: “‘Dela Gothic One’, sans-serif”,
-fontSize: “clamp(2rem, 8vw, 3.5rem)”,
-textAlign: “center”,
-background: “linear-gradient(135deg, #FF4D8D, #FFD93D, #4DFFEE)”,
-WebkitBackgroundClip: “text”,
-WebkitTextFillColor: “transparent”,
-backgroundClip: “text”,
-marginBottom: “0.3rem”,
-},
-subtitle: {
-textAlign: “center”,
-color: “rgba(255,255,255,0.45)”,
-fontSize: “0.9rem”,
-marginBottom: “2rem”,
-letterSpacing: “0.1em”,
-},
-inputCard: {
-background: “rgba(255,255,255,0.05)”,
-border: “2px solid rgba(255,255,255,0.12)”,
-borderRadius: 20,
-padding: “1.5rem”,
-marginBottom: “1.5rem”,
-},
-label: {
-display: “block”,
-color: “#FFD93D”,
-fontSize: “0.8rem”,
-fontWeight: 700,
-letterSpacing: “0.15em”,
-textTransform: “uppercase”,
-marginBottom: “0.6rem”,
-},
-input: {
-width: “100%”,
-background: “rgba(255,255,255,0.08)”,
-border: “2px solid rgba(255,255,255,0.15)”,
-borderRadius: 12,
-padding: “0.9rem 1rem”,
-color: “#fff”,
-fontSize: “1.1rem”,
-fontFamily: “inherit”,
-outline: “none”,
-boxSizing: “border-box”,
-},
-resultCard: {
-background: “rgba(255,255,255,0.05)”,
-border: “2px solid #FF4D8D”,
-borderRadius: 20,
-padding: “1.8rem”,
-marginBottom: “1.5rem”,
-textAlign: “center”,
-boxShadow: “0 0 40px rgba(255,77,141,0.2)”,
-},
-ageLabel: {
-fontFamily: “‘Dela Gothic One’, sans-serif”,
-fontSize: “1.4rem”,
-color: “rgba(255,255,255,0.8)”,
-},
-ageNum: {
-fontFamily: “‘Dela Gothic One’, sans-serif”,
-fontSize: “clamp(4rem, 18vw, 7rem)”,
-lineHeight: 1,
-background: “linear-gradient(135deg, #FFD93D, #FF7A4D, #FF4D8D)”,
-WebkitBackgroundClip: “text”,
-WebkitTextFillColor: “transparent”,
-backgroundClip: “text”,
-},
-ageDetail: {
-color: “rgba(255,255,255,0.45)”,
-fontSize: “0.85rem”,
-marginTop: “0.3rem”,
-},
-statsRow: {
-display: “grid”,
-gridTemplateColumns: “repeat(3, 1fr)”,
-gap: “0.8rem”,
-marginTop: “1.2rem”,
-},
-statBox: {
-background: “rgba(255,255,255,0.05)”,
-borderRadius: 12,
-padding: “0.8rem 0.4rem”,
-border: “1px solid rgba(255,255,255,0.1)”,
-},
-statNum: {
-fontFamily: “‘Dela Gothic One’, sans-serif”,
-fontSize: “1.2rem”,
-color: “#4DFFEE”,
-},
-statLabel: {
-fontSize: “0.65rem”,
-color: “rgba(255,255,255,0.35)”,
-marginTop: “0.2rem”,
-},
-timelineTitle: {
-fontFamily: “‘Dela Gothic One’, sans-serif”,
-fontSize: “1.3rem”,
-color: “#4DFFEE”,
-marginBottom: “1.2rem”,
-},
-timelineWrap: {
-position: “relative”,
-paddingLeft: “2rem”,
-},
-timelineLine: {
-position: “absolute”,
-left: 8,
-top: 0,
-bottom: 0,
-width: 3,
-background: “linear-gradient(180deg, #FF4D8D, #C04DFF, #4DFFEE)”,
-borderRadius: 10,
-},
-};
+label {
+display: block;
+font-size: 0.85rem;
+color: var(–yellow);
+letter-spacing: 0.15em;
+text-transform: uppercase;
+margin-bottom: 0.6rem;
+font-weight: 700;
+}
 
-return (
-<>
-<style>{`@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=BIZ+UDPGothic:wght@400;700&display=swap'); @keyframes confettiFall { from { opacity: 1; transform: translateY(0) rotate(0deg); } to { opacity: 0; transform: translateY(100vh) rotate(720deg); } } @keyframes popIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } } @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } } input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; } * { box-sizing: border-box; margin: 0; padding: 0; }`}</style>
+input[type=“date”] {
+width: 100%;
+background: rgba(255,255,255,0.08);
+border: 2px solid rgba(255,255,255,0.15);
+border-radius: 14px;
+padding: 1rem 1.2rem;
+color: #fff;
+font-size: 1.2rem;
+font-family: ‘BIZ UDPGothic’, sans-serif;
+outline: none;
+transition: all 0.3s;
+cursor: pointer;
+}
 
-```
-  {showConfetti && <Confetti />}
+input[type=“date”]:focus {
+border-color: var(–cyan);
+background: rgba(77,255,238,0.08);
+box-shadow: 0 0 20px rgba(77,255,238,0.15);
+}
 
-  <div style={styles.body}>
-    <div style={styles.bgGlow} />
-    <div style={styles.container}>
+input[type=“date”]::-webkit-calendar-picker-indicator {
+filter: invert(1);
+cursor: pointer;
+width: 20px;
+height: 20px;
+}
 
-      <h1 style={styles.h1}>今何歳だっけ？</h1>
-      <p style={styles.subtitle}>✨ 生年月日を入れてね ✨</p>
+.result-card {
+display: none;
+background: rgba(255,255,255,0.05);
+border: 2px solid var(–pink);
+border-radius: 24px;
+padding: 2rem;
+margin-bottom: 2rem;
+text-align: center;
+animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+box-shadow: 0 0 40px rgba(255,77,141,0.2);
+}
 
-      <div style={styles.inputCard}>
-        <label style={styles.label}>🎂 生年月日</label>
-        <input
-          type="date"
-          max={maxDate}
-          value={dateVal}
-          onChange={(e) => setDateVal(e.target.value)}
-          style={styles.input}
-        />
+@keyframes popIn {
+from { opacity: 0; transform: scale(0.85) translateY(20px); }
+to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.age-display {
+font-family: ‘Dela Gothic One’, sans-serif;
+font-size: clamp(4rem, 20vw, 8rem);
+line-height: 1;
+background: linear-gradient(135deg, var(–yellow), var(–orange), var(–pink));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+animation: numberPulse 2s ease-in-out infinite;
+}
+
+@keyframes numberPulse {
+0%, 100% { filter: drop-shadow(0 0 20px rgba(255,217,61,0.4)); }
+50% { filter: drop-shadow(0 0 40px rgba(255,217,61,0.7)); }
+}
+
+.age-label {
+font-family: ‘Dela Gothic One’, sans-serif;
+font-size: 1.8rem;
+color: rgba(255,255,255,0.8);
+margin-bottom: 0.5rem;
+}
+
+.age-detail {
+color: rgba(255,255,255,0.5);
+font-size: 0.9rem;
+margin-top: 0.5rem;
+}
+
+.stats-row {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 1rem;
+margin-top: 1.5rem;
+}
+
+.stat-box {
+background: rgba(255,255,255,0.05);
+border-radius: 14px;
+padding: 1rem 0.5rem;
+border: 1px solid rgba(255,255,255,0.1);
+}
+
+.stat-num {
+font-family: ‘Dela Gothic One’, sans-serif;
+font-size: 1.4rem;
+color: var(–cyan);
+}
+
+.stat-label {
+font-size: 0.7rem;
+color: rgba(255,255,255,0.4);
+margin-top: 0.2rem;
+}
+
+.timeline-section { display: none; }
+
+.timeline-title {
+font-family: ‘Dela Gothic One’, sans-serif;
+font-size: 1.4rem;
+margin-bottom: 1.5rem;
+color: var(–cyan);
+}
+
+.timeline {
+position: relative;
+padding-left: 2rem;
+}
+
+.timeline::before {
+content: ‘’;
+position: absolute;
+left: 8px;
+top: 0;
+bottom: 0;
+width: 3px;
+background: linear-gradient(180deg, var(–pink), var(–purple), var(–cyan));
+border-radius: 10px;
+}
+
+.timeline-item {
+position: relative;
+margin-bottom: 1.2rem;
+animation: slideIn 0.4s ease both;
+}
+
+@keyframes slideIn {
+from { opacity: 0; transform: translateX(-15px); }
+to { opacity: 1; transform: translateX(0); }
+}
+
+.timeline-dot {
+position: absolute;
+left: -1.75rem;
+top: 1rem;
+width: 14px;
+height: 14px;
+border-radius: 50%;
+border: 2px solid var(–bg);
+}
+
+.timeline-card {
+background: rgba(255,255,255,0.05);
+border-radius: 14px;
+padding: 1rem 1.2rem;
+border-left: 3px solid;
+transition: transform 0.2s, background 0.2s;
+}
+
+.timeline-card:hover {
+transform: translateX(4px);
+background: rgba(255,255,255,0.09);
+}
+
+.timeline-year {
+font-family: ‘Dela Gothic One’, sans-serif;
+font-size: 1rem;
+margin-bottom: 0.2rem;
+}
+
+.timeline-age {
+font-size: 0.75rem;
+opacity: 0.5;
+font-weight: 700;
+letter-spacing: 0.1em;
+}
+
+.timeline-event {
+font-size: 0.85rem;
+color: rgba(255,255,255,0.7);
+margin-top: 0.3rem;
+}
+
+.confetti-emoji {
+position: fixed;
+pointer-events: none;
+font-size: 1.5rem;
+animation: falling 3s linear forwards;
+z-index: 999;
+}
+
+@keyframes falling {
+0% { opacity: 1; transform: translateY(-50px) rotate(0deg); }
+100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+  <h1>今何歳だっけ？</h1>
+  <p class="subtitle">✨ 生年月日を入れてね ✨</p>
+
+  <div class="input-card">
+    <label>🎂 生年月日</label>
+    <input type="date" id="birthdate" max="">
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="age-label">あなたは今</div>
+    <div class="age-display" id="ageNum">0</div>
+    <div class="age-label">歳！</div>
+    <div class="age-detail" id="ageDetail"></div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-num" id="monthsOld">-</div>
+        <div class="stat-label">ヶ月</div>
       </div>
-
-      {result && (
-        <>
-          <div style={{ ...styles.resultCard, animation: "popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)" }}>
-            <div style={styles.ageLabel}>あなたは今</div>
-            <div style={styles.ageNum}>{result.age}</div>
-            <div style={styles.ageLabel}>歳！</div>
-            <div style={styles.ageDetail}>
-              {result.isBirthday
-                ? "🎂 今日が誕生日！おめでとう！🎂"
-                : `${result.birth.getFullYear()}年${result.birth.getMonth() + 1}月${result.birth.getDate()}日生まれ`}
-            </div>
-
-            <div style={styles.statsRow}>
-              <div style={styles.statBox}>
-                <div style={styles.statNum}>{result.months.toLocaleString()}</div>
-                <div style={styles.statLabel}>ヶ月</div>
-              </div>
-              <div style={styles.statBox}>
-                <div style={styles.statNum}>{result.days.toLocaleString()}</div>
-                <div style={styles.statLabel}>日</div>
-              </div>
-              <div style={styles.statBox}>
-                <div style={styles.statNum}>{result.isBirthday ? "🎉" : result.nextBD}</div>
-                <div style={styles.statLabel}>日後に誕生日🎉</div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div style={styles.timelineTitle}>📅 あなたの年表</div>
-            <div style={styles.timelineWrap}>
-              <div style={styles.timelineLine} />
-              {result.timeline.map((item, i) => {
-                const color = COLORS[i % COLORS.length];
-                const isCurrent = item.age === result.age;
-                return (
-                  <div
-                    key={item.age}
-                    style={{
-                      position: "relative",
-                      marginBottom: "1rem",
-                      animation: `slideIn 0.35s ${i * 0.035}s ease both`,
-                      opacity: 0,
-                      animationFillMode: "forwards",
-                    }}
-                  >
-                    {/* dot */}
-                    <div style={{
-                      position: "absolute",
-                      left: "-1.65rem",
-                      top: "1rem",
-                      width: 13,
-                      height: 13,
-                      borderRadius: "50%",
-                      background: isCurrent ? "#FFD93D" : color,
-                      border: "2px solid #0D0D1A",
-                      boxShadow: `0 0 8px ${isCurrent ? "#FFD93D" : color}`,
-                    }} />
-                    <div style={{
-                      background: isCurrent ? "rgba(255,217,61,0.08)" : "rgba(255,255,255,0.05)",
-                      border: `2px solid ${isCurrent ? "#FFD93D" : color}`,
-                      borderRadius: 13,
-                      padding: "0.85rem 1.1rem",
-                    }}>
-                      <div style={{
-                        fontFamily: "'Dela Gothic One', sans-serif",
-                        fontSize: "1rem",
-                        color: isCurrent ? "#FFD93D" : color,
-                      }}>
-                        {item.year}年 {isCurrent && "👈 今ここ！"}
-                      </div>
-                      <div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.4)", fontWeight: 700, letterSpacing: "0.08em", marginTop: 2 }}>
-                        {item.age}歳
-                      </div>
-                      {item.milestone && (
-                        <div style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.7)", marginTop: "0.3rem" }}>
-                          {item.milestone}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </>
-      )}
+      <div class="stat-box">
+        <div class="stat-num" id="daysOld">-</div>
+        <div class="stat-label">日</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="nextBirthday">-</div>
+        <div class="stat-label">日後に誕生日🎉</div>
+      </div>
     </div>
   </div>
-</>
-```
 
-);
+  <div class="timeline-section" id="timelineSection">
+    <div class="timeline-title">📅 あなたの年表</div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+</div>
+
+<script>
+const COLORS = ['#FF4D8D','#FFD93D','#4DFFEE','#C04DFF','#FF7A4D','#4DFF91'];
+
+const MILESTONES = {
+  0: '👶 誕生！この世界に来たよ',
+  1: '🚶 1歳、よちよち歩きはじめ',
+  3: '🎒 幼稚園・保育園',
+  6: '🏫 小学校入学',
+  7: '✏️ 九九を覚える頃',
+  10: '🔟 二桁！小学校高学年',
+  12: '🎓 中学校入学',
+  13: '🌟 ティーンエイジャー突入！',
+  15: '📚 高校受験',
+  18: '🗳️ 選挙権・成年',
+  20: '🎊 成人式',
+  22: '💼 大学卒業・社会人デビュー',
+  25: '🚗 レンタカーが借りやすくなる',
+  30: '🌿 アラサー！',
+  35: '💫 折り返し感あり',
+  40: '🔥 アラフォー！まだまだ現役',
+  50: '🌸 半世紀！',
+  60: '🎋 還暦おめでとう！',
+  70: '🌺 古希',
+  77: '🍀 喜寿',
+  80: '🎑 傘寿',
+  88: '🌾 米寿',
+  90: '🌻 卒寿',
+  99: '✨ 白寿',
+  100: '🎆 100歳！超大台！！',
+};
+
+function getDaysBetween(a, b) {
+  return Math.floor((b - a) / 86400000);
 }
+
+function launchConfetti() {
+  const emojis = ['🎉','🎊','✨','🌟','💫','🎈'];
+  for (let i = 0; i < 15; i++) {
+    setTimeout(function() {
+      var el = document.createElement('div');
+      el.className = 'confetti-emoji';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (2 + Math.random() * 2) + 's';
+      document.body.appendChild(el);
+      setTimeout(function() { el.remove(); }, 4000);
+    }, i * 100);
+  }
+}
+
+function buildTimeline(birth, currentAge) {
+  var timeline = document.getElementById('timeline');
+  timeline.innerHTML = '';
+
+  var items = [];
+  for (var age = 0; age <= currentAge; age++) {
+    var yearDate = new Date(birth.getTime());
+    yearDate.setFullYear(yearDate.getFullYear() + age);
+    items.push({ age: age, year: yearDate.getFullYear(), milestone: MILESTONES[age] || null });
+  }
+
+  items.reverse().forEach(function(item, i) {
+    var color = COLORS[i % COLORS.length];
+    var isCurrent = item.age === currentAge;
+    var borderColor = isCurrent ? '#FFD93D' : color;
+
+    var div = document.createElement('div');
+    div.className = 'timeline-item';
+    div.style.animationDelay = (i * 0.04) + 's';
+    div.innerHTML =
+      '<div class="timeline-dot" style="background:' + borderColor + '; box-shadow: 0 0 8px ' + borderColor + '"></div>' +
+      '<div class="timeline-card" style="border-color:' + borderColor + ';' + (isCurrent ? 'background:rgba(255,217,61,0.08)' : '') + '">' +
+        '<div class="timeline-year" style="color:' + borderColor + '">' + item.year + '年' + (isCurrent ? ' 👈 今ここ！' : '') + '</div>' +
+        '<div class="timeline-age">' + item.age + '歳</div>' +
+        (item.milestone ? '<div class="timeline-event">' + item.milestone + '</div>' : '') +
+      '</div>';
+    timeline.appendChild(div);
+  });
+}
+
+document.getElementById('birthdate').addEventListener('change', function() {
+  var val = this.value;
+  if (!val) return;
+
+  // YYYY-MM-DD をパース（タイムゾーン問題を避けるため手動パース）
+  var parts = val.split('-');
+  var birth = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  var now = new Date();
+
+  var age = now.getFullYear() - birth.getFullYear();
+  var mDiff = now.getMonth() - birth.getMonth();
+  if (mDiff < 0 || (mDiff === 0 && now.getDate() < birth.getDate())) age--;
+
+  var months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
+  if (now.getDate() < birth.getDate()) months--;
+
+  var days = getDaysBetween(birth, now);
+
+  var nextBD = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
+  if (nextBD <= now) nextBD.setFullYear(nextBD.getFullYear() + 1);
+  var daysToNext = getDaysBetween(now, nextBD);
+
+  var isBirthday = birth.getDate() === now.getDate() && birth.getMonth() === now.getMonth();
+
+  document.getElementById('ageNum').textContent = age;
+  document.getElementById('ageDetail').textContent =
+    isBirthday
+      ? '🎂 今日が誕生日！おめでとう！🎂'
+      : birth.getFullYear() + '年' + (birth.getMonth() + 1) + '月' + birth.getDate() + '日生まれ';
+  document.getElementById('monthsOld').textContent = months.toLocaleString();
+  document.getElementById('daysOld').textContent = days.toLocaleString();
+  document.getElementById('nextBirthday').textContent = isBirthday ? '🎉' : daysToNext;
+
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('timelineSection').style.display = 'block';
+
+  buildTimeline(birth, age);
+  if (isBirthday) launchConfetti();
+});
+
+// max を今日に設定
+var today = new Date();
+var yyyy = today.getFullYear();
+var mm = String(today.getMonth() + 1).padStart(2, '0');
+var dd = String(today.getDate()).padStart(2, '0');
+document.getElementById('birthdate').max = yyyy + '-' + mm + '-' + dd;
+</script>
+
+</body>
+</html>
